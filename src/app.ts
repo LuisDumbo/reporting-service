@@ -10,7 +10,7 @@ app.use(cors());
 
 
 app.use(express.json());
-app.use("/", (req: Request, res: Response) => {
+app.use("/api", (req: Request, res: Response) => {
     res.send("API is running");
 })
 app.use("/api/reports", reportRoutes);
