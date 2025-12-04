@@ -38,6 +38,9 @@ export class BalanceteController {
                 authorizationHeader
             );
 
+            console.log("Resposta api" + apiResponse);
+
+
 
 
             if (!apiResponse.sucesso || !apiResponse.dados?.length) {
