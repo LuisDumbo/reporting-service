@@ -15,7 +15,7 @@ export class ExcelController {
 
             const { ano, trimestre } = req.body;
 
-            const filePath = req.file.path;
+            const filePath = req.file.buffer;;
 
             const finalJson = this.excelService.excelToStructuredJson(
                 filePath,
@@ -42,18 +42,18 @@ export class ExcelController {
 
 
 
-            const outputDir = path.join(__dirname, "../../uploads/json");
-            if (!fs.existsSync(outputDir)) {
-                fs.mkdirSync(outputDir, { recursive: true });
-            }
-
-            const outputFile = path.join(outputDir, `balancete_${Date.now()}.json`);
-            fs.writeFileSync(outputFile, JSON.stringify(finalJson, null, 2));
+            /*    const outputDir = path.join(__dirname, "../../uploads/json");
+                if (!fs.existsSync(outputDir)) {
+                    fs.mkdirSync(outputDir, { recursive: true });
+                } 
+    
+                const outputFile = path.join(outputDir, `balancete_${Date.now()}.json`);
+                fs.writeFileSync(outputFile, JSON.stringify(finalJson, null, 2)); */
 
             return res.status(200).json({
                 success: true,
                 message: "Excel processado e estruturado com sucesso!",
-                saved_to: outputFile,
+                saved_to: "",
                 data: finalJson
             });
 
@@ -76,7 +76,7 @@ export class ExcelController {
 
             const { ano, trimestre } = req.body;
 
-            const filePath = req.file.path;
+            const filePath = req.file.buffer;;
 
             const finalJson = this.excelService.excelToStructuredJson(
                 filePath,
@@ -103,18 +103,18 @@ export class ExcelController {
 
 
 
-            const outputDir = path.join(__dirname, "../../uploads/json");
-            if (!fs.existsSync(outputDir)) {
-                fs.mkdirSync(outputDir, { recursive: true });
-            }
-
-            const outputFile = path.join(outputDir, `balancete_${Date.now()}.json`);
-            fs.writeFileSync(outputFile, JSON.stringify(finalJson, null, 2));
+            /*   const outputDir = path.join(__dirname, "../../uploads/json");
+               if (!fs.existsSync(outputDir)) {
+                   fs.mkdirSync(outputDir, { recursive: true });
+               }
+   
+               const outputFile = path.join(outputDir, `balancete_${Date.now()}.json`);
+               fs.writeFileSync(outputFile, JSON.stringify(finalJson, null, 2));*/
 
             return res.status(200).json({
                 success: true,
                 message: "Excel processado e estruturado com sucesso!",
-                saved_to: outputFile,
+                saved_to: "",
                 data: finalJson
             });
 

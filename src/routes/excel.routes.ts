@@ -9,7 +9,10 @@ const controller = new ExcelController();
 const balanceteController = new BalanceteController();
 
 // Configuração do multer
-const upload = multer({ dest: "uploads/" });
+const upload = multer({
+    storage: multer.memoryStorage(),
+});
+
 
 // Rota POST para upload do Excel
 router.post("/upload", authMiddleware, upload.single("file"), (req, res) => controller.uploadExcel(req, res));

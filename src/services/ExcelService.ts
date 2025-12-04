@@ -12,46 +12,40 @@ export class ExcelService {
         return ExcelService.instance;
     }
 
-    excelToStructuredJson(filePath: string, ano: number, trimestre: number) {
-        const workbook = XLSX.readFile(filePath);
+    excelToStructuredJson(buffer: Buffer, ano: number, trimestre: number) {
+        const workbook = XLSX.read(buffer, { type: "buffer" });
 
-        // Objeto base com ano e trimestre
         const result: any = {
             ano,
             trimestre
         };
 
-        // Percorre todas as abas do ficheiro
         workbook.SheetNames.forEach((sheetName) => {
             const sheet = workbook.Sheets[sheetName];
             if (!sheet) return;
 
             let rows: any[] = XLSX.utils.sheet_to_json(sheet, { defval: null });
 
-            // Se a aba estiver vazia, ainda assim criamos a propriedade como array vazio
             if (!rows.length) {
                 result[sheetName] = [];
                 return;
             }
 
-            // Validação de colunas para esta aba
             const columns = Object.keys(rows[0] || {});
             this.validator.validateColumns(columns);
 
-            // Limpa colunas __EMPTY
             rows = rows.map(row => this.cleanRow(row));
 
-            // Validação de tipos linha a linha
             rows.forEach((row, index) => {
                 this.validator.validateRowTypes(row, index);
             });
 
-            // Estrutura final dessa aba (ex.: result["activos"], result["passivos"], etc.)
             result[sheetName] = rows.map(row => this.structureRow(row));
         });
 
         return result;
     }
+
 
     private cleanRow(row: any) {
         Object.keys(row).forEach(key => {
