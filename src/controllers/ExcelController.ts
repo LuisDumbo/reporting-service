@@ -1,0 +1,131 @@
+import { Request, Response } from "express";
+import { ExcelService } from "../services/ExcelService";
+import fs from "fs";
+import path from "path";
+import axios from "axios";
+
+export class ExcelController {
+    private excelService = ExcelService.getInstance();
+
+    async uploadExcel(req: Request, res: Response) {
+        try {
+            if (!req.file) {
+                return res.status(400).json({ error: "Nenhum arquivo enviado." });
+            }
+
+            const { ano, trimestre } = req.body;
+
+            const filePath = req.file.path;
+
+            const finalJson = this.excelService.excelToStructuredJson(
+                filePath,
+                Number(ano),
+                Number(trimestre)
+            );
+
+
+            console.log(req.headers.Authorization);
+
+
+            const response = await axios.post(
+                "https://reporteshml.cmc.ao/api/reportes/balancete",
+                finalJson,
+                {
+                    headers: {
+                        Authorization: req.headers.Authorization,
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
+
+            console.log("Resposta da api" + response);
+
+
+
+            const outputDir = path.join(__dirname, "../../uploads/json");
+            if (!fs.existsSync(outputDir)) {
+                fs.mkdirSync(outputDir, { recursive: true });
+            }
+
+            const outputFile = path.join(outputDir, `balancete_${Date.now()}.json`);
+            fs.writeFileSync(outputFile, JSON.stringify(finalJson, null, 2));
+
+            return res.status(200).json({
+                success: true,
+                message: "Excel processado e estruturado com sucesso!",
+                saved_to: outputFile,
+                data: finalJson
+            });
+
+        } catch (err: any) {
+
+            console.log(err);
+
+            return res.status(400).json({
+                success: false,
+                error: err.message,
+            });
+        }
+    }
+
+    async updateExcel(req: Request, res: Response) {
+        try {
+            if (!req.file) {
+                return res.status(400).json({ error: "Nenhum arquivo enviado." });
+            }
+
+            const { ano, trimestre } = req.body;
+
+            const filePath = req.file.path;
+
+            const finalJson = this.excelService.excelToStructuredJson(
+                filePath,
+                Number(ano),
+                Number(trimestre)
+            );
+
+
+            console.log(req.headers.Authorization);
+
+
+            const response = await axios.post(
+                "https://reporteshml.cmc.ao/api/reportes/balancete/updateBalancete",
+                finalJson,
+                {
+                    headers: {
+                        Authorization: req.headers.Authorization,
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
+
+            console.log("Resposta da api" + response);
+
+
+
+            const outputDir = path.join(__dirname, "../../uploads/json");
+            if (!fs.existsSync(outputDir)) {
+                fs.mkdirSync(outputDir, { recursive: true });
+            }
+
+            const outputFile = path.join(outputDir, `balancete_${Date.now()}.json`);
+            fs.writeFileSync(outputFile, JSON.stringify(finalJson, null, 2));
+
+            return res.status(200).json({
+                success: true,
+                message: "Excel processado e estruturado com sucesso!",
+                saved_to: outputFile,
+                data: finalJson
+            });
+
+        } catch (err: any) {
+
+            console.log(err);
+
+            return res.status(400).json({
+                success: false,
+                error: err.message,
+            });
+        }
+    }
+}
