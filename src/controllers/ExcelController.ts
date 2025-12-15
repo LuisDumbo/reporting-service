@@ -24,7 +24,6 @@ export class ExcelController {
             );
 
 
-            console.log(req.headers.Authorization);
 
 
             const response = await axios.post(
@@ -63,7 +62,8 @@ export class ExcelController {
 
             return res.status(400).json({
                 success: false,
-                error: err.message,
+                error: err.response.data.mensagem || "Erro ao processar o arquivo Excel."
+,
             });
         }
     }
