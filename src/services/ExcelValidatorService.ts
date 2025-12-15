@@ -50,16 +50,16 @@ export class ExcelValidatorService {
     }
 
     private writeLog(message: string) {
-        const logDir = path.join(__dirname, "../../logs");
-
-        if (!fs.existsSync(logDir)) {
-            fs.mkdirSync(logDir, { recursive: true });
-        }
-
-        const logFile = path.join(logDir, "excel_errors.log");
-        const fullMessage = `[${new Date().toISOString()}] ${message}\n`;
-
-        fs.appendFileSync(logFile, fullMessage, "utf-8");
-        console.error(fullMessage);
+        /* const logDir = path.join(__dirname, "../../logs");
+ 
+         if (!fs.existsSync(logDir)) {
+             fs.mkdirSync(logDir, { recursive: true });
+         }
+ 
+         const logFile = path.join(logDir, "excel_errors.log");
+         const fullMessage = `[${new Date().toISOString()}] ${message}\n`;
+ 
+         fs.appendFileSync(logFile, fullMessage, "utf-8"); 
+         console.error(fullMessage);*/
     }
 }
