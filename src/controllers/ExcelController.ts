@@ -59,18 +59,21 @@ export class ExcelController {
         } catch (err: any) {
 
             console.log(err);
+            console.log(err.response?.status)
 
 
-            if (err.response?.status === 400) {
+            if (err.response?.status == 400) {
+                console.log("Entrou no if");
+
                 return res.status(400).json({
                     success: false,
-                    message: 'Balancete mal formatado. Verifique os dados e tente novamente.',
+                    error:  `${err.response.data.mensagem } Verifique os dados do balancete e tente novamente.`,
                 });
             }
 
             return res.status(400).json({
                 success: false,
-                error: err.response.data.mensagem || "Erro ao processar o arquivo Excel."
+                error: err.response.data.mensagem || "Erro ao processar o arquivo Excel, passou do limite de submissão esperado 5 minutos e tente novamente"
                 ,
             });
         }
@@ -133,7 +136,7 @@ export class ExcelController {
             });
 
             // ⏱ Timeout / Gateway
-            if (err.response?.status === 504) {
+            if (err.response?.status == 504) {
                 return res.status(504).json({
                     success: false,
                     message: 'O servidor demorou demasiado a responder. Tente novamente em instantes.',
