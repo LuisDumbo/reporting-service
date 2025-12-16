@@ -60,10 +60,18 @@ export class ExcelController {
 
             console.log(err);
 
+
+            if (err.response?.status === 400) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Balancete mal formatado. Verifique os dados e tente novamente.',
+                });
+            }
+
             return res.status(400).json({
                 success: false,
                 error: err.response.data.mensagem || "Erro ao processar o arquivo Excel."
-,
+                ,
             });
         }
     }
@@ -119,13 +127,35 @@ export class ExcelController {
             });
 
         } catch (err: any) {
+            console.error('AXIOS ERROR:', {
+                status: err.response?.status,
+                message: err.message,
+            });
 
-            console.log(err);
+            // ⏱ Timeout / Gateway
+            if (err.response?.status === 504) {
+                return res.status(504).json({
+                    success: false,
+                    message: 'O servidor demorou demasiado a responder. Tente novamente em instantes.',
+                });
+            }
 
-            return res.status(400).json({
+            // ❌ Sem resposta (queda de rede, DNS, etc)
+            if (!err.response) {
+                return res.status(503).json({
+                    success: false,
+                    message: 'Serviço temporariamente indisponível.',
+                });
+            }
+
+            // ⚠️ Outros erros da API
+            return res.status(err.response.status).json({
                 success: false,
-                error: err.message,
+                message:
+                    err.response.data?.mensagem ||
+                    'Erro ao processar a requisição.',
             });
         }
+
     }
 }
