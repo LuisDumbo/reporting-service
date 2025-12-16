@@ -73,7 +73,7 @@ export class ExcelController {
 
             return res.status(400).json({
                 success: false,
-                error: err.response.data.mensagem || "Erro ao processar o arquivo Excel, passou do limite de submissão esperado 5 minutos e tente novamente"
+                error: err.response.data.mensagem || "Passou do limite de submissão espera 5 minutos e tente novamente"
                 ,
             });
         }
