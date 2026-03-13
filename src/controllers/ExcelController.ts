@@ -13,17 +13,22 @@ export class ExcelController {
                 return res.status(400).json({ error: "Nenhum arquivo enviado." });
             }
 
-            const { ano, trimestre } = req.body;
+            const { ano, trimestre, total_up } = req.body;
 
             const filePath = req.file.buffer;;
 
             const finalJson = this.excelService.excelToStructuredJson(
                 filePath,
                 Number(ano),
-                Number(trimestre)
+                Number(trimestre),
+                Number(total_up)
             );
 
+            // console.log(finalJson);
 
+
+
+            //console.log(req.headers.Authorization);
 
 
             const response = await axios.post(
@@ -59,22 +64,10 @@ export class ExcelController {
         } catch (err: any) {
 
             console.log(err);
-            console.log(err.response?.status)
-
-
-            if (err.response?.status == 400) {
-                console.log("Entrou no if");
-
-                return res.status(400).json({
-                    success: false,
-                    error:  `${err.response.data.mensagem } Verifique os dados do balancete e tente novamente.`,
-                });
-            }
 
             return res.status(400).json({
                 success: false,
-                error: err.response.data.mensagem || "Passou do limite de submissão espera 5 minutos e tente novamente"
-                ,
+                error: err.response?.data?.mensagem,
             });
         }
     }
@@ -85,14 +78,15 @@ export class ExcelController {
                 return res.status(400).json({ error: "Nenhum arquivo enviado." });
             }
 
-            const { ano, trimestre } = req.body;
+            const { ano, trimestre, total_up } = req.body;
 
             const filePath = req.file.buffer;;
 
             const finalJson = this.excelService.excelToStructuredJson(
                 filePath,
                 Number(ano),
-                Number(trimestre)
+                Number(trimestre),
+                Number(total_up)
             );
 
 
@@ -130,35 +124,13 @@ export class ExcelController {
             });
 
         } catch (err: any) {
-            console.error('AXIOS ERROR:', {
-                status: err.response?.status,
-                message: err.message,
-            });
 
-            // ⏱ Timeout / Gateway
-            if (err.response?.status == 504) {
-                return res.status(504).json({
-                    success: false,
-                    message: 'O servidor demorou demasiado a responder. Tente novamente em instantes.',
-                });
-            }
+            console.log(err.data);
 
-            // ❌ Sem resposta (queda de rede, DNS, etc)
-            if (!err.response) {
-                return res.status(503).json({
-                    success: false,
-                    message: 'Serviço temporariamente indisponível.',
-                });
-            }
-
-            // ⚠️ Outros erros da API
-            return res.status(err.response.status).json({
+            return res.status(400).json({
                 success: false,
-                message:
-                    err.response.data?.mensagem ||
-                    'Erro ao processar a requisição.',
+                error: err.response?.data?.mensagem,
             });
         }
-
     }
 }

@@ -12,12 +12,13 @@ export class ExcelService {
         return ExcelService.instance;
     }
 
-    excelToStructuredJson(buffer: Buffer, ano: number, trimestre: number) {
+    excelToStructuredJson(buffer: Buffer, ano: number, trimestre: number, total_up: number) {
         const workbook = XLSX.read(buffer, { type: "buffer" });
 
         const result: any = {
             ano,
-            trimestre
+            trimestre,
+            total_up
         };
 
         workbook.SheetNames.forEach((sheetName) => {
